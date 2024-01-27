@@ -17,7 +17,7 @@ build-api:
 #	kind load docker-image $(IMAGE_NAME_API)
 
 apply-manifests-api:
-	kubectl apply -f $(K8S_MANIFESTS_DIR_API)
+	kubectl apply -k $(K8S_MANIFESTS_DIR_API)/overlays/dev
 
 migrate: build-migrations delete-migration-job apply-manifests-migrations
 

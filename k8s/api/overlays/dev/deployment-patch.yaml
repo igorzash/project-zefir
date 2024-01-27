@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          env:
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: jwt-secret-key
+                key: SECRET_KEY
