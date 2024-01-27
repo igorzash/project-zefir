@@ -5,5 +5,4 @@ commonLabels:
   app: api
 resources:
 - ../../common
-- ./deployment.yaml
-- ./service.yaml
+- ./migrations-job.yaml
