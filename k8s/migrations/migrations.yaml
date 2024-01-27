@@ -1,0 +1,27 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: api-migration
+  namespace: api
+  labels:
+    app: api
+spec:
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+      - name: api-pvc
+        persistentVolumeClaim:
+          claimName: api-pvc
+      containers:
+      - name: migrations
+        image: migrations
+        imagePullPolicy: Never
+        volumeMounts:
+        - mountPath: /data
+          name: api-pvc
+  backoffLimit: 4
