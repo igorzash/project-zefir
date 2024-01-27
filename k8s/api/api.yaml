@@ -44,7 +44,7 @@ metadata:
   name: api-pvc
   namespace: api
 spec:
-  storageClassName: standard
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
@@ -57,6 +57,7 @@ metadata:
   name: api-service
   namespace: api
 spec:
+  type: LoadBalancer
   selector:
     app: api
   ports:
