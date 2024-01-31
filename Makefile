@@ -9,7 +9,7 @@ dev: build-api delete-pods-api apply-manifests-api
 
 test:
 	cd api && \
-	GIN_MODE=release CGO_ENABLED=1 SECRET_KEY=$$(dd if=/dev/urandom bs=100 count=1 status=none | base64) go test
+	GIN_MODE=release CGO_ENABLED=1 SECRET_KEY=$$(dd if=/dev/urandom bs=100 count=1 status=none | base64) go test ./...
 
 delete-pods-api:
 	kubectl delete --all pods --namespace=api

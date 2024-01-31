@@ -1,4 +1,4 @@
-package main
+package auth
 
 import (
 	"log"
@@ -7,12 +7,13 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/igorzash/project-zefir/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var identityKey = "email"
 
-func SetUpAuthMiddleware() *jwt.GinJWTMiddleware {
+func GetMiddleware() *jwt.GinJWTMiddleware {
 	// Get the SECRET_KEY environment variable
 	secretKey := os.Getenv("SECRET_KEY")
 	if secretKey == "" {
@@ -27,7 +28,7 @@ func SetUpAuthMiddleware() *jwt.GinJWTMiddleware {
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
+			if v, ok := data.(*user.User); ok {
 				return jwt.MapClaims{
 					identityKey: v.Email,
 				}
@@ -36,17 +37,17 @@ func SetUpAuthMiddleware() *jwt.GinJWTMiddleware {
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &User{
+			return &user.User{
 				Email: claims[identityKey].(string),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var loginVals login
+			var loginVals Login
 			if err := c.ShouldBind(&loginVals); err != nil {
-				return "", jwt.ErrMissingLoginValues
+				return nil, jwt.ErrMissingLoginValues
 			}
 
-			user := GetUserByEmail(loginVals.Email)
+			user := user.GetByEmail(loginVals.Email)
 
 			if user != nil {
 				// Hash the provided password and compare it to the stored hash.

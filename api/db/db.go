@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -9,9 +9,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var DB *sql.DB
+var Conn *sql.DB
 
-func ConnectToDb() {
+func Connect() {
 	dbPath := os.Getenv("SQLITE_DB_PATH")
 	if dbPath == "" {
 		log.Fatal("SQLITE_DB_PATH environment variable is not set")
@@ -27,6 +27,8 @@ func ConnectToDb() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	Conn = db
 
 	fmt.Println("Connected to SQLite database")
 }

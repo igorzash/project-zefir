@@ -5,29 +5,18 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/igorzash/project-zefir/auth"
+	"github.com/igorzash/project-zefir/db"
+	"github.com/igorzash/project-zefir/user"
 )
 
-type login struct {
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
-
-type User struct {
-	Id           int    `db:"id"`
-	Email        string `db:"email" json:"-"`
-	CreatedAt    string `db:"created_at" json:"createdAt"`
-	UpdatedAt    string `db:"updated_at" json:"updatedAt"`
-	Nickname     string `db:"nickname"`
-	PasswordHash string `db:"password_hash" json:"-"`
-}
-
 func main() {
-	ConnectToDb()
+	db.Connect()
 
 	// Create a new Gin router
 	r := gin.Default()
 
-	authMiddleware := SetUpAuthMiddleware()
+	authMiddleware := auth.GetMiddleware()
 
 	// When you use jwt.New(), the function is already automatically called for checking,
 	// which means you don't need to call it again.
@@ -50,10 +39,10 @@ func main() {
 	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 	auth.Use(authMiddleware.MiddlewareFunc())
 	{
-		r.GET("/users", HandleGetUsers)
-		r.GET("/users/:id", HandleGetUserByID)
-		r.POST("/users", HandleCreateUser)
-		r.PUT("/users/:id", HandleUpdateUser)
+		r.GET("/user", user.HandleFind)
+		r.GET("/user/:id", user.HandleGetByID)
+		r.POST("/user", user.HandleCreate)
+		r.PUT("/user/:id", user.HandleUpdate)
 	}
 
 	// Start the server

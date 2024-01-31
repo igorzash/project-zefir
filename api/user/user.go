@@ -1,15 +1,16 @@
-package main
+package user
 
 import (
 	"database/sql"
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/igorzash/project-zefir/db"
 )
 
-func GetUserByEmail(email string) *User {
+func GetByEmail(email string) *User {
 	sqlStmt := `SELECT id, created_at, updated_at, email, nickname, password_hash FROM users WHERE email = ?`
-	row := DB.QueryRow(sqlStmt, email)
+	row := db.Conn.QueryRow(sqlStmt, email)
 
 	var user User
 	err := row.Scan(&user.Id, &user.CreatedAt, &user.UpdatedAt, &user.Email, &user.Nickname, &user.PasswordHash)
@@ -25,18 +26,18 @@ func GetUserByEmail(email string) *User {
 	return &user
 }
 
-func HandleGetUsers(c *gin.Context) {
+func HandleFind(c *gin.Context) {
 	// Logic for getting all users
 }
 
-func HandleCreateUser(c *gin.Context) {
+func HandleCreate(c *gin.Context) {
 	// Logic for creating a new user
 }
 
-func HandleGetUserByID(c *gin.Context) {
+func HandleGetByID(c *gin.Context) {
 	// Logic for getting a user by ID
 }
 
-func HandleUpdateUser(c *gin.Context) {
+func HandleUpdate(c *gin.Context) {
 	// Logic for updating a user
 }
