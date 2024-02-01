@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,16 @@ func main() {
 
 	// Create a new Gin router
 	r := gin.Default()
+
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/static", "./static")
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{})
+	})
+	r.GET("/test", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "test.html", gin.H{})
+	})
 
 	authMiddleware := auth.GetMiddleware(repos)
 

@@ -1,7 +1,7 @@
 IMAGE_NAME_WEB := web
 IMAGE_NAME_MIGRATIONS := migrations
 K8S_MANIFESTS_DIR_WEB := k8s/web
-K8S_MANIFESTS_DIR_MIGRATIONS := k8s/migrations
+K8S_MANIFESTS_DIR_MIGRATIONS := k8s/web_migrations
 
 .PHONY: dev test delete-pods-web build-web apply-manifests-web migrate delete-migration-job build-migrations apply-manifests-migrations
 
@@ -29,7 +29,7 @@ delete-migration-job:
 	kubectl delete -napi job.batch api-migration --ignore-not-found=true
 
 build-migrations:
-	docker build -f ./images/migrations.Dockerfile -t $(IMAGE_NAME_MIGRATIONS) ./migrations
+	docker build -f ./images/migrations.Dockerfile -t $(IMAGE_NAME_MIGRATIONS) ./web_migrations
 
 #load-to-kind-migrations:
 #	kind load docker-image $(IMAGE_NAME_MIGRATIONS)

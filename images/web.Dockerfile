@@ -1,30 +1,36 @@
-# Use the official Golang image as the base image
-FROM golang:1.21.6-alpine
-
-# Set the working directory inside the container
+FROM node:21-alpine3.18 as scss_builder
 WORKDIR /app
 
-# Install gcc and musl-dev for cgo
+RUN npm install -g sass
+
+COPY ./styles ./styles
+RUN sass  --style compressed ./styles/index.scss ./static/index.css
+
+FROM golang:1.21.6-alpine as runtime
+WORKDIR /app
+
 RUN apk add --no-cache gcc musl-dev
 
-# Copy the Go module files
 COPY go.mod go.sum ./
-
-# Download and install the Go dependencies
 RUN go mod download
 
-# Copy the source code into the container
-COPY . ./
+COPY ./auth/ ./auth/
+COPY ./cmd/ ./cmd/
+COPY ./db/ ./db/
+COPY ./followpkg/ ./followpkg/
+COPY ./helpers/ ./helpers/
+COPY ./repos/ ./repos/
+COPY ./userpkg/ ./userpkg/
 
-# Remove test related files
-RUN rm -r ./test
-RUN find . -name "*_test.go" -exec rm {} \;
+RUN find . -name "*_test.go" -exec rm {} \; && \
+    CGO_ENABLED=1 go build -o ./main ./cmd/app && \
+    go clean -modcache && \
+    rm -r ./auth ./cmd ./db ./followpkg ./helpers ./repos ./userpkg
 
-# Build the Go application
-RUN CGO_ENABLED=1 go build -o ./main ./cmd/app
+COPY ./static ./static
+COPY --from=scss_builder /app/static/index.css ./static/
 
-# Expose the port that the application listens on
+COPY ./templates ./templates
+
 EXPOSE 8080
-
-# Set the entry point for the container
 CMD ["./main"]
