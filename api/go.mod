@@ -6,16 +6,20 @@ require (
 	github.com/appleboy/gin-jwt/v2 v2.9.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/mattn/go-sqlite3 v1.14.20
+	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto v0.18.0
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 )
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect

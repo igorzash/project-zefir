@@ -1,68 +1,31 @@
-package auth
+package auth_test
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/brianvoe/gofakeit/v6"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/igorzash/project-zefir/db"
 	"github.com/igorzash/project-zefir/test"
+	"github.com/igorzash/project-zefir/userpkg"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/stretchr/testify/suite"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func TestLoginHandlerUnauthorized(t *testing.T) {
-	test.SetupEnvironment()
-	defer db.Conn.Close()
-
-	// Initialize your routes
-	r := gin.Default()
-	authMiddleware := GetMiddleware() // use the imported package to call the function
-	r.POST("/login", authMiddleware.LoginHandler)
-
-	// Create a request to login
-	loginJSON := `{"email": "test@example.com", "password": "password"}`
-	req, _ := http.NewRequest("POST", "/login", strings.NewReader(loginJSON))
-	req.Header.Set("Content-Type", "application/json")
-	resp := httptest.NewRecorder()
-
-	// Send the request to the API
-	r.ServeHTTP(resp, req)
-
-	// Check the response
-	if resp.Code != http.StatusUnauthorized {
-		t.Errorf("Expected status 401; got %d", resp.Code)
-	}
-
-	// You can also check the response body with resp.Body.String()
+type AuthSuite struct {
+	test.Suite
 }
 
-func TestLoginHandlerAuthorized(t *testing.T) {
-	test.SetupEnvironment()
-	defer db.Conn.Close()
+func TestAuth(t *testing.T) {
+	suite.Run(t, new(AuthSuite))
+}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatalf("Failed to hash password: %v", err)
-	}
-
-	currentTime := time.Now().Format(time.RFC3339)
-
-	_, err = db.Conn.Exec("INSERT INTO users (created_at, updated_at, nickname, email, password_hash) VALUES (?, ?, ?, ?, ?)", currentTime, currentTime, "test", "test@example.com", hashedPassword)
-	if err != nil {
-		log.Fatalf("Failed to insert user: %v", err)
-	}
-
-	// Initialize your routes
-	r := gin.Default()
-	authMiddleware := GetMiddleware() // use the imported package to call the function
-	r.POST("/login", authMiddleware.LoginHandler)
-
+func (suite *AuthSuite) TestLoginHandlerUnauthorized() {
 	// Create a request to login
 	loginJSON := `{"email": "test@example.com", "password": "password"}`
 	req, _ := http.NewRequest("POST", "/login", strings.NewReader(loginJSON))
@@ -70,12 +33,31 @@ func TestLoginHandlerAuthorized(t *testing.T) {
 	resp := httptest.NewRecorder()
 
 	// Send the request to the API
-	r.ServeHTTP(resp, req)
+	suite.R.ServeHTTP(resp, req)
+	suite.Equal(http.StatusUnauthorized, resp.Code)
+}
 
-	// Check the response
-	if resp.Code != http.StatusOK {
-		t.Errorf("Expected status 200; got %d", resp.Code)
+func (suite *AuthSuite) TestLoginHandlerAuthorized() {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
+	suite.NoError(err)
+
+	currentTime := time.Now().Format(time.RFC3339)
+	user := userpkg.User{
+		CreatedAt:    currentTime,
+		UpdatedAt:    currentTime,
+		PasswordHash: string(hashedPassword),
 	}
+	gofakeit.Struct(&user)
+	_, err = suite.Repos.UserRepo.Insert(&user)
+	suite.NoError(err)
 
-	// You can also check the response body with resp.Body.String()
+	// Create a request to login
+	loginJSON := fmt.Sprintf(`{"email": "%s", "password": "password"}`, user.Email)
+	req, _ := http.NewRequest("POST", "/login", strings.NewReader(loginJSON))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+
+	// Send the request to the API
+	suite.R.ServeHTTP(resp, req)
+	suite.Equal(http.StatusOK, resp.Code)
 }

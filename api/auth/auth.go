@@ -7,13 +7,14 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/igorzash/project-zefir/user"
+	"github.com/igorzash/project-zefir/repos"
+	"github.com/igorzash/project-zefir/userpkg"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var identityKey = "email"
 
-func GetMiddleware() *jwt.GinJWTMiddleware {
+func GetMiddleware(repos *repos.Repositories) *jwt.GinJWTMiddleware {
 	// Get the SECRET_KEY environment variable
 	secretKey := os.Getenv("SECRET_KEY")
 	if secretKey == "" {
@@ -28,7 +29,7 @@ func GetMiddleware() *jwt.GinJWTMiddleware {
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*user.User); ok {
+			if v, ok := data.(*userpkg.User); ok {
 				return jwt.MapClaims{
 					identityKey: v.Email,
 				}
@@ -37,7 +38,7 @@ func GetMiddleware() *jwt.GinJWTMiddleware {
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &user.User{
+			return &userpkg.User{
 				Email: claims[identityKey].(string),
 			}
 		},
@@ -47,7 +48,7 @@ func GetMiddleware() *jwt.GinJWTMiddleware {
 				return nil, jwt.ErrMissingLoginValues
 			}
 
-			user := user.GetByEmail(loginVals.Email)
+			user, _ := repos.UserRepo.GetByEmail(loginVals.Email)
 
 			if user != nil {
 				// Hash the provided password and compare it to the stored hash.

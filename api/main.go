@@ -7,16 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/igorzash/project-zefir/auth"
 	"github.com/igorzash/project-zefir/db"
-	"github.com/igorzash/project-zefir/user"
+	"github.com/igorzash/project-zefir/repos"
+	"github.com/igorzash/project-zefir/userpkg"
 )
 
 func main() {
-	db.Connect()
+	dbConn := db.Connect()
+
+	repos, err := repos.NewRepositories(dbConn)
+	if err != nil {
+		log.Fatal("Failed to initialize repositories: " + err.Error())
+	}
 
 	// Create a new Gin router
 	r := gin.Default()
 
-	authMiddleware := auth.GetMiddleware()
+	authMiddleware := auth.GetMiddleware(repos)
 
 	// When you use jwt.New(), the function is already automatically called for checking,
 	// which means you don't need to call it again.
@@ -39,10 +45,10 @@ func main() {
 	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 	auth.Use(authMiddleware.MiddlewareFunc())
 	{
-		r.GET("/user", user.HandleFind)
-		r.GET("/user/:id", user.HandleGetByID)
-		r.POST("/user", user.HandleCreate)
-		r.PUT("/user/:id", user.HandleUpdate)
+		r.GET("/user", userpkg.HandleFind)
+		r.GET("/user/:id", userpkg.HandleGetByID)
+		r.POST("/user", userpkg.HandleCreate)
+		r.PUT("/user/:id", userpkg.HandleUpdate)
 	}
 
 	// Start the server
