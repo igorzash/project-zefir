@@ -10,4 +10,4 @@ RUN CGO_CFLAGS="-D_LARGEFILE64_SOURCE" CGO_ENABLED=1 go install -tags='sqlite3' 
 
 COPY ./migrations ./migrations
 
-ENTRYPOINT [ "migrate", "-source", "file:///app/migrations", "-database", "sqlite3:///data/api.db", "up"]
+ENTRYPOINT [ "migrate", "-source", "file:///app/migrations", "-database", "sqlite3:///data/web.db", "up"]

@@ -3,7 +3,7 @@ package userpkg
 import (
 	"time"
 
-	"github.com/igorzash/project-zefir/helpers"
+	"github.com/igorzash/project-zefir/web/helpers"
 )
 
 type User struct {

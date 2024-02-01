@@ -3,10 +3,10 @@ package followpkg_test
 import (
 	"testing"
 
-	"github.com/igorzash/project-zefir/followpkg"
-	"github.com/igorzash/project-zefir/helpers"
-	"github.com/igorzash/project-zefir/test"
-	"github.com/igorzash/project-zefir/userpkg"
+	"github.com/igorzash/project-zefir/web/followpkg"
+	"github.com/igorzash/project-zefir/web/helpers"
+	"github.com/igorzash/project-zefir/web/test"
+	"github.com/igorzash/project-zefir/web/userpkg"
 	"github.com/stretchr/testify/suite"
 )
 

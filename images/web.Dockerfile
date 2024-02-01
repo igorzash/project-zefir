@@ -14,10 +14,14 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the source code into the container
-COPY *.go ./
+COPY . ./
+
+# Remove test related files
+RUN rm -r ./test
+RUN find . -name "*_test.go" -exec rm {} \;
 
 # Build the Go application
-RUN CGO_ENABLED=1 go build -o main .
+RUN CGO_ENABLED=1 go build -o ./main ./cmd/app
 
 # Expose the port that the application listens on
 EXPOSE 8080

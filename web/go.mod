@@ -1,4 +1,4 @@
-module github.com/igorzash/project-zefir
+module github.com/igorzash/project-zefir/web
 
 go 1.21.6
 

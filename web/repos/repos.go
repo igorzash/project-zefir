@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/igorzash/project-zefir/followpkg"
-	"github.com/igorzash/project-zefir/userpkg"
+	"github.com/igorzash/project-zefir/web/followpkg"
+	"github.com/igorzash/project-zefir/web/userpkg"
 )
 
 type Repositories struct {

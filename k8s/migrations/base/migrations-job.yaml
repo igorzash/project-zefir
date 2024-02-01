@@ -2,26 +2,26 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: api-migration
-  namespace: api
+  name: webdb-migration
+  namespace: web
   labels:
-    app: api
+    app: web
 spec:
   template:
     metadata:
       labels:
-        app: api
+        app: web
     spec:
       restartPolicy: OnFailure
       volumes:
-      - name: api-pvc
+      - name: web-pvc
         persistentVolumeClaim:
-          claimName: api-pvc
+          claimName: web-pvc
       containers:
       - name: migrations
         image: migrations
         imagePullPolicy: Never
         volumeMounts:
         - mountPath: /data
-          name: api-pvc
+          name: web-pvc
   backoffLimit: 4

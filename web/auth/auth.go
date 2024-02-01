@@ -7,8 +7,8 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/igorzash/project-zefir/repos"
-	"github.com/igorzash/project-zefir/userpkg"
+	"github.com/igorzash/project-zefir/web/repos"
+	"github.com/igorzash/project-zefir/web/userpkg"
 	"golang.org/x/crypto/bcrypt"
 )
 

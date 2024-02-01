@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/igorzash/project-zefir/test"
+	"github.com/igorzash/project-zefir/web/test"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/suite"
 )

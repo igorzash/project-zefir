@@ -8,9 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
-	"github.com/igorzash/project-zefir/auth"
-	"github.com/igorzash/project-zefir/repos"
-	"github.com/igorzash/project-zefir/userpkg"
+	"github.com/igorzash/project-zefir/web/auth"
+	"github.com/igorzash/project-zefir/web/repos"
+	"github.com/igorzash/project-zefir/web/userpkg"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
