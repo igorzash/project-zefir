@@ -4,11 +4,13 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
 	"github.com/igorzash/project-zefir/auth"
 	"github.com/igorzash/project-zefir/repos"
+	"github.com/igorzash/project-zefir/userpkg"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -73,4 +75,16 @@ func (suite *Suite) SetupTest() {
 
 func (suite *Suite) TearDownTest() {
 	suite.DBConn.Close()
+}
+
+func (suite *Suite) NewUser() *userpkg.User {
+	user, err := userpkg.NewUser(gofakeit.Email(), gofakeit.Username(), gofakeit.Password(true, true, true, false, false, 12))
+	suite.NoError(err)
+	return user
+}
+
+func (suite *Suite) NewUserWithPassword(password string) *userpkg.User {
+	user, err := userpkg.NewUser(gofakeit.Email(), gofakeit.Username(), password)
+	suite.NoError(err)
+	return user
 }

@@ -13,7 +13,8 @@ type FollowRepository struct {
 	getByUsersIDsStmt      *sql.Stmt
 	getFollowStateStmt     *sql.Stmt
 	getUsersFollowedByStmt *sql.Stmt
-	getUserFollowers       *sql.Stmt
+	getUserFollowersStmt   *sql.Stmt
+	deleteFollowStmt       *sql.Stmt
 }
 
 func prepareGetUsersStmt(dbConn *sql.DB, column1 string, column2 string) (*sql.Stmt, error) {
@@ -57,9 +58,14 @@ func NewFollowRepository(dbConn *sql.DB) (*FollowRepository, error) {
 		return nil, fmt.Errorf("failed to prepare getUsersStmt: %w", err)
 	}
 
-	repo.getUserFollowers, err = prepareGetUsersStmt(dbConn, "follower_id", "followee_id")
+	repo.getUserFollowersStmt, err = prepareGetUsersStmt(dbConn, "follower_id", "followee_id")
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare getUsersStmt: %w", err)
+	}
+
+	repo.deleteFollowStmt, err = dbConn.Prepare(`DELETE FROM follows WHERE follower_id = ? AND followee_id = ?`)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare deleteFollowStmt: %w", err)
 	}
 
 	return repo, nil
@@ -137,9 +143,13 @@ func getUsers(stmt *sql.Stmt, userID int, limit int, offset int) ([]*userpkg.Use
 }
 
 func (repo *FollowRepository) GetUserFollowers(userID int, limit int, offset int) ([]*userpkg.User, error) {
-	return getUsers(repo.getUserFollowers, userID, limit, offset)
+	return getUsers(repo.getUserFollowersStmt, userID, limit, offset)
 }
 
 func (repo *FollowRepository) GetUsersFollowedBy(userID int, limit int, offset int) ([]*userpkg.User, error) {
 	return getUsers(repo.getUsersFollowedByStmt, userID, limit, offset)
+}
+
+func (repo *FollowRepository) Delete(followerID int, followeeID int) (sql.Result, error) {
+	return repo.deleteFollowStmt.Exec(followerID, followeeID)
 }

@@ -26,14 +26,10 @@ func (suite *UserRepositorySuite) TestGetByEmailNil() {
 }
 
 func (suite *UserRepositorySuite) TestGetAfterCreateAndUpdate() {
-	currentTime := time.Now().Format(time.RFC3339)
-	user := userpkg.User{
-		CreatedAt:    currentTime,
-		UpdatedAt:    currentTime,
-		PasswordHash: "0",
-	}
-	gofakeit.Struct(&user)
-	_, err := suite.Repos.UserRepo.Insert(&user)
+	user, err := userpkg.NewUser(gofakeit.Email(), gofakeit.Username(), gofakeit.Password(true, true, true, false, false, 12))
+	suite.NoError(err)
+
+	_, err = suite.Repos.UserRepo.Insert(user)
 	suite.NoError(err)
 	suite.NotNil(user.ID)
 
@@ -41,12 +37,12 @@ func (suite *UserRepositorySuite) TestGetAfterCreateAndUpdate() {
 		userFromDb, err := suite.Repos.UserRepo.GetByEmail(user.Email)
 		suite.NoError(err)
 		suite.NotNil(userFromDb)
-		suite.Equal(&user, userFromDb)
+		suite.Equal(user, userFromDb)
 
 		userFromDb, err = suite.Repos.UserRepo.GetByID(user.ID)
 		suite.NoError(err)
 		suite.NotNil(userFromDb)
-		suite.Equal(&user, userFromDb)
+		suite.Equal(user, userFromDb)
 	}
 	assertUserMatchesDbVersion()
 
@@ -55,7 +51,7 @@ func (suite *UserRepositorySuite) TestGetAfterCreateAndUpdate() {
 	for oldNickname == user.Nickname {
 		user.Nickname = gofakeit.Username()
 	}
-	_, err = suite.Repos.UserRepo.Update(&user)
+	_, err = suite.Repos.UserRepo.Update(user)
 	suite.NoError(err)
 	assertUserMatchesDbVersion()
 }

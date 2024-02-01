@@ -2,9 +2,7 @@ package followpkg_test
 
 import (
 	"testing"
-	"time"
 
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/igorzash/project-zefir/followpkg"
 	"github.com/igorzash/project-zefir/helpers"
 	"github.com/igorzash/project-zefir/test"
@@ -20,55 +18,27 @@ func TestFollow(t *testing.T) {
 	suite.Run(t, new(FollowRepositorySuite))
 }
 
+const NumUsers = 100
+
 func (suite *FollowRepositorySuite) TestFollows() {
-	currentTime := time.Now().Format(time.RFC3339)
-	users := [20]*userpkg.User{}
-	for i := 0; i < 20; i++ {
-		user := &userpkg.User{
-			CreatedAt:    currentTime,
-			UpdatedAt:    currentTime,
-			PasswordHash: "0",
-		}
-		gofakeit.Struct(user)
+	users := [NumUsers]*userpkg.User{}
 
-		_, err := suite.Repos.UserRepo.Insert(user)
-		suite.NoError(err)
-		suite.NotNil(user.ID)
-
+	for i := 0; i < len(users); i++ {
+		user := suite.NewUser()
+		suite.Repos.UserRepo.Insert(user)
 		users[i] = user
 	}
 
-	followMap := map[int]([]int){
-		0:  {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-		1:  {2, 3, 4, 5, 6, 7, 8, 9, 10, 11},
-		2:  {3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
-		3:  {4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
-		4:  {5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
-		5:  {6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
-		6:  {7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
-		7:  {8, 9, 10, 11, 12, 13, 14, 15, 16, 17},
-		8:  {9, 10, 11, 12, 13, 14, 15, 16, 17, 18},
-		9:  {10, 11, 12, 13, 14, 15, 16, 17, 18, 19},
-		10: {11, 12, 13, 14, 15, 16, 17, 18, 19},
-		11: {12, 13, 14, 15, 16, 17, 18, 19},
-		12: {13, 14, 15, 16, 17, 18, 19},
-		13: {14, 15, 16, 17, 18, 19},
-		14: {15, 16, 17, 18, 19},
-		15: {16, 17, 18, 19},
-		16: {17, 18, 19},
-		17: {18, 19},
-		18: {19},
-		19: {},
+	followMap := make(map[int][]int, NumUsers)
+	for i := 0; i < NumUsers; i++ {
+		for j := i + 1; j < NumUsers && j <= i+10; j++ {
+			followMap[i] = append(followMap[i], j)
+		}
 	}
 
 	for followerID, followeeIDs := range followMap {
 		for _, followeeID := range followeeIDs {
-			follow := &followpkg.Follow{
-				FollowerID: followerID,
-				FolloweeID: followeeID,
-				CreatedAt:  currentTime,
-				UpdatedAt:  currentTime,
-			}
+			follow := followpkg.NewFollow(followerID, followeeID)
 			_, err := suite.Repos.FollowRepo.Insert(follow)
 			suite.NoError(err)
 		}
@@ -123,6 +93,38 @@ func (suite *FollowRepositorySuite) TestFollows() {
 				suite.NoError(err)
 				suite.Equal(followpkg.NotFollowing, followState)
 			}
+		}
+	}
+}
+
+func (suite *FollowRepositorySuite) TestUnFollow() {
+	users := [NumUsers]*userpkg.User{}
+
+	for i := 0; i < len(users); i++ {
+		user := suite.NewUser()
+		suite.Repos.UserRepo.Insert(user)
+		users[i] = user
+	}
+
+	for i := 0; i < len(users); i++ {
+		for j := i; j < len(users); j++ {
+			if i == j {
+				continue
+			}
+
+			_, err := suite.Repos.FollowRepo.Delete(i, j)
+			suite.NoError(err)
+
+			follow := followpkg.NewFollow(i, j)
+			_, err = suite.Repos.FollowRepo.Insert(follow)
+			suite.NoError(err)
+
+			_, err = suite.Repos.FollowRepo.Delete(i, j)
+			suite.NoError(err)
+
+			followState, err := suite.Repos.FollowRepo.GetFollowState(i, j)
+			suite.NoError(err)
+			suite.Equal(followpkg.NotFollowing, followState)
 		}
 	}
 }
