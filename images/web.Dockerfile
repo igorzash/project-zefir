@@ -19,6 +19,7 @@ RUN go mod download
 COPY ./app/ ./app/
 COPY ./auth/ ./auth/
 COPY ./cmd/ ./cmd/
+COPY ./controllers/ ./controllers/
 COPY ./db/ ./db/
 COPY ./followpkg/ ./followpkg/
 COPY ./helpers/ ./helpers/

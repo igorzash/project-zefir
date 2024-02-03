@@ -2,10 +2,10 @@ package app
 
 import (
 	"database/sql"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/igorzash/project-zefir/web/auth"
+	"github.com/igorzash/project-zefir/web/controllers"
 	"github.com/igorzash/project-zefir/web/db"
 	"github.com/igorzash/project-zefir/web/repos"
 )
@@ -49,18 +49,7 @@ func NewApp(params *AppParams) (*App, error) {
 	}
 
 	auth.SetUpRoutes(app.R, app.Repos)
-
-	app.R.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{})
-	})
-
-	app.R.GET("/signin", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "signin.html", gin.H{})
-	})
-
-	app.R.GET("/signup", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "signup.html", gin.H{})
-	})
+	controllers.SetUpRoutes(app.R)
 
 	return app, nil
 }
