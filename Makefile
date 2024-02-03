@@ -9,7 +9,7 @@ dev: build-web delete-pods-web apply-manifests-web
 
 test:
 	cd web && \
-	GIN_MODE=release CGO_ENABLED=1 SECRET_KEY=$$(dd if=/dev/urandom bs=100 count=1 status=none | base64) go test ./...
+	GIN_MODE=debug CGO_ENABLED=1 SECRET_KEY=$$(dd if=/dev/urandom bs=100 count=1 status=none | base64) go test ./...
 
 delete-pods-web:
 	kubectl delete --all pods --namespace=web

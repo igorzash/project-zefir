@@ -20,7 +20,7 @@ func TestUser(t *testing.T) {
 }
 
 func (suite *UserRepositorySuite) TestGetByEmailNil() {
-	user, err := suite.Repos.UserRepo.GetByEmail(gofakeit.Email())
+	user, err := suite.App.Repos.UserRepo.GetByEmail(gofakeit.Email())
 	suite.NoError(err)
 	suite.Nil(user)
 }
@@ -29,17 +29,17 @@ func (suite *UserRepositorySuite) TestGetAfterCreateAndUpdate() {
 	user, err := userpkg.NewUser(gofakeit.Email(), gofakeit.Username(), gofakeit.Password(true, true, true, false, false, 12))
 	suite.NoError(err)
 
-	_, err = suite.Repos.UserRepo.Insert(user)
+	_, err = suite.App.Repos.UserRepo.Insert(user)
 	suite.NoError(err)
 	suite.NotNil(user.ID)
 
 	assertUserMatchesDbVersion := func() {
-		userFromDb, err := suite.Repos.UserRepo.GetByEmail(user.Email)
+		userFromDb, err := suite.App.Repos.UserRepo.GetByEmail(user.Email)
 		suite.NoError(err)
 		suite.NotNil(userFromDb)
 		suite.Equal(user, userFromDb)
 
-		userFromDb, err = suite.Repos.UserRepo.GetByID(user.ID)
+		userFromDb, err = suite.App.Repos.UserRepo.GetByID(user.ID)
 		suite.NoError(err)
 		suite.NotNil(userFromDb)
 		suite.Equal(user, userFromDb)
@@ -51,7 +51,7 @@ func (suite *UserRepositorySuite) TestGetAfterCreateAndUpdate() {
 	for oldNickname == user.Nickname {
 		user.Nickname = gofakeit.Username()
 	}
-	_, err = suite.Repos.UserRepo.Update(user)
+	_, err = suite.App.Repos.UserRepo.Update(user)
 	suite.NoError(err)
 	assertUserMatchesDbVersion()
 }

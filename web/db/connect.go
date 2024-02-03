@@ -8,15 +8,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func Connect() *sql.DB {
+func Connect() (*sql.DB, error) {
 	dbPath := os.Getenv("SQLITE_DB_PATH")
 	if dbPath == "" {
-		log.Fatal("SQLITE_DB_PATH environment variable is not set")
+		log.Println("[WARNING] No SQLITE_DB_PATH environment variable found, using in-memory database")
+		dbPath = ":memory:"
 	}
 
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	// Test the database connection
@@ -25,5 +26,5 @@ func Connect() *sql.DB {
 		log.Fatal(err)
 	}
 
-	return db
+	return db, nil
 }

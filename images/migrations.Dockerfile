@@ -1,12 +1,9 @@
-FROM golang:1.21.6-alpine
-
-# Set the working directory inside the container
+FROM alpine:3.19.1
+RUN apk add --no-cache go gcc musl-dev
 WORKDIR /app
 
-# Install gcc and musl-dev for cgo
-RUN apk add --no-cache gcc musl-dev
-
-RUN CGO_CFLAGS="-D_LARGEFILE64_SOURCE" CGO_ENABLED=1 go install -tags='sqlite3' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+ENV CGO_ENABLED=1
+RUN go install -tags='sqlite3' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 COPY ./migrations ./migrations
 

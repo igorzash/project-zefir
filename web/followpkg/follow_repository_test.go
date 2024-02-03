@@ -25,7 +25,7 @@ func (suite *FollowRepositorySuite) TestFollows() {
 
 	for i := 0; i < len(users); i++ {
 		user := suite.NewUser()
-		suite.Repos.UserRepo.Insert(user)
+		suite.App.Repos.UserRepo.Insert(user)
 		users[i] = user
 	}
 
@@ -39,13 +39,13 @@ func (suite *FollowRepositorySuite) TestFollows() {
 	for followerID, followeeIDs := range followMap {
 		for _, followeeID := range followeeIDs {
 			follow := followpkg.NewFollow(followerID, followeeID)
-			_, err := suite.Repos.FollowRepo.Insert(follow)
+			_, err := suite.App.Repos.FollowRepo.Insert(follow)
 			suite.NoError(err)
 		}
 	}
 
 	for followerID, followeeIDs := range followMap {
-		usersFollowedBy, err := suite.Repos.FollowRepo.GetUsersFollowedBy(followerID, len(users), 0)
+		usersFollowedBy, err := suite.App.Repos.FollowRepo.GetUsersFollowedBy(followerID, len(users), 0)
 		suite.NoError(err)
 		suite.Len(usersFollowedBy, len(followMap[followerID]))
 
@@ -53,7 +53,7 @@ func (suite *FollowRepositorySuite) TestFollows() {
 			suite.Contains(followeeIDs, userFollowedBy.ID)
 		}
 
-		usersFollowing, err := suite.Repos.FollowRepo.GetUserFollowers(followerID, len(users), 0)
+		usersFollowing, err := suite.App.Repos.FollowRepo.GetUserFollowers(followerID, len(users), 0)
 		suite.NoError(err)
 
 		for _, userFollowing := range usersFollowing {
@@ -62,7 +62,7 @@ func (suite *FollowRepositorySuite) TestFollows() {
 
 		for userID := 0; userID < len(followMap); userID++ {
 			if helpers.Contains(followeeIDs, userID) {
-				follow, err := suite.Repos.FollowRepo.GetByUsersIDs(followerID, userID)
+				follow, err := suite.App.Repos.FollowRepo.GetByUsersIDs(followerID, userID)
 				suite.NoError(err)
 				suite.NotNil(follow)
 				suite.Equal(followerID, follow.FollowerID)
@@ -70,7 +70,7 @@ func (suite *FollowRepositorySuite) TestFollows() {
 
 				isMutual := helpers.Contains(followMap[userID], followerID)
 
-				followState, err := suite.Repos.FollowRepo.GetFollowState(followerID, userID)
+				followState, err := suite.App.Repos.FollowRepo.GetFollowState(followerID, userID)
 				suite.NoError(err)
 
 				if isMutual {
@@ -80,16 +80,16 @@ func (suite *FollowRepositorySuite) TestFollows() {
 				}
 
 				if isMutual {
-					followState, err := suite.Repos.FollowRepo.GetFollowState(userID, followerID)
+					followState, err := suite.App.Repos.FollowRepo.GetFollowState(userID, followerID)
 					suite.NoError(err)
 					suite.Equal(followpkg.Mutual, followState)
 				}
 			} else {
-				follow, err := suite.Repos.FollowRepo.GetByUsersIDs(followerID, userID)
+				follow, err := suite.App.Repos.FollowRepo.GetByUsersIDs(followerID, userID)
 				suite.NoError(err)
 				suite.Nil(follow)
 
-				followState, err := suite.Repos.FollowRepo.GetFollowState(followerID, userID)
+				followState, err := suite.App.Repos.FollowRepo.GetFollowState(followerID, userID)
 				suite.NoError(err)
 				suite.Equal(followpkg.NotFollowing, followState)
 			}
@@ -102,7 +102,7 @@ func (suite *FollowRepositorySuite) TestUnFollow() {
 
 	for i := 0; i < len(users); i++ {
 		user := suite.NewUser()
-		suite.Repos.UserRepo.Insert(user)
+		suite.App.Repos.UserRepo.Insert(user)
 		users[i] = user
 	}
 
@@ -112,17 +112,17 @@ func (suite *FollowRepositorySuite) TestUnFollow() {
 				continue
 			}
 
-			_, err := suite.Repos.FollowRepo.Delete(i, j)
+			_, err := suite.App.Repos.FollowRepo.Delete(i, j)
 			suite.NoError(err)
 
 			follow := followpkg.NewFollow(i, j)
-			_, err = suite.Repos.FollowRepo.Insert(follow)
+			_, err = suite.App.Repos.FollowRepo.Insert(follow)
 			suite.NoError(err)
 
-			_, err = suite.Repos.FollowRepo.Delete(i, j)
+			_, err = suite.App.Repos.FollowRepo.Delete(i, j)
 			suite.NoError(err)
 
-			followState, err := suite.Repos.FollowRepo.GetFollowState(i, j)
+			followState, err := suite.App.Repos.FollowRepo.GetFollowState(i, j)
 			suite.NoError(err)
 			suite.Equal(followpkg.NotFollowing, followState)
 		}
