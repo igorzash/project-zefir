@@ -7,7 +7,7 @@ import (
 	"github.com/igorzash/project-zefir/web/auth"
 	"github.com/igorzash/project-zefir/web/controllers"
 	"github.com/igorzash/project-zefir/web/db"
-	"github.com/igorzash/project-zefir/web/repos"
+	"github.com/igorzash/project-zefir/web/entities"
 )
 
 type AppParams struct {
@@ -18,7 +18,7 @@ type AppParams struct {
 
 type App struct {
 	R      *gin.Engine
-	Repos  *repos.Repositories
+	Repos  *entities.Repositories
 	DBConn *sql.DB
 }
 
@@ -33,10 +33,14 @@ func NewApp(params *AppParams) (*App, error) {
 	}
 
 	if params.RunMigrations {
-		app.runMigrations()
+		err := app.runMigrations()
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	app.Repos, err = repos.NewRepositories(app.DBConn)
+	app.Repos, err = entities.NewRepositories(app.DBConn)
 	if err != nil {
 		return nil, err
 	}

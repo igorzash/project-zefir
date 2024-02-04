@@ -10,23 +10,21 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const DEFAULT_MIGRATIONS_DIR = "file://../../web_migrations/migrations"
-
 func (app *App) runMigrations() error {
 	driver, err := sqlite3.WithInstance(app.DBConn, &sqlite3.Config{})
 	if err != nil {
 		return err
 	}
 
-	var migrationsDir string
-	if _, exists := os.LookupEnv("MIGRATIONS_DIR"); exists {
-		migrationsDir = os.Getenv("MIGRATIONS_DIR")
+	var migrationsURL string
+	if _, exists := os.LookupEnv("MIGRATIONS_URL"); exists {
+		migrationsURL = os.Getenv("MIGRATIONS_URL")
 	} else {
-		migrationsDir = DEFAULT_MIGRATIONS_DIR
+		return fmt.Errorf("MIGRATIONS_URL env variable is not set")
 	}
 
 	migrations, err := migrate.NewWithDatabaseInstance(
-		migrationsDir,
+		migrationsURL,
 		"sqlite3",
 		driver,
 	)

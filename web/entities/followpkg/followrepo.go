@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/igorzash/project-zefir/web/userpkg"
+	"github.com/igorzash/project-zefir/web/entities/userpkg"
 )
 
 type FollowRepository struct {

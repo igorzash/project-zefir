@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/igorzash/project-zefir/web/entities/userpkg"
 	"github.com/igorzash/project-zefir/web/test"
-	"github.com/igorzash/project-zefir/web/userpkg"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/brianvoe/gofakeit/v6"

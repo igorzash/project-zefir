@@ -2,7 +2,7 @@ package auth_user_common
 
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/igorzash/project-zefir/web/userpkg"
+	"github.com/igorzash/project-zefir/web/entities/userpkg"
 )
 
 func PayloadFunc(data interface{}) jwt.MapClaims {

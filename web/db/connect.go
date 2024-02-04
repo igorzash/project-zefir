@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -11,8 +12,12 @@ import (
 func Connect() (*sql.DB, error) {
 	dbPath := os.Getenv("SQLITE_DB_PATH")
 	if dbPath == "" {
-		log.Println("[WARNING] No SQLITE_DB_PATH environment variable found, using in-memory database")
-		dbPath = ":memory:"
+		if _, exists := os.LookupEnv("ALLOW_IN_MEMORY_DB"); exists {
+			log.Println("[WARNING] No SQLITE_DB_PATH environment variable found, using in-memory database")
+			dbPath = ":memory:"
+		} else {
+			return nil, fmt.Errorf("SQLITE_DB_PATH environment variable is not set")
+		}
 	}
 
 	db, err := sql.Open("sqlite3", dbPath)

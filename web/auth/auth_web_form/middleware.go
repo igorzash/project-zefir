@@ -7,10 +7,10 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/igorzash/project-zefir/web/auth/auth_user_common"
-	"github.com/igorzash/project-zefir/web/repos"
+	"github.com/igorzash/project-zefir/web/entities"
 )
 
-func NewMiddleware(repos *repos.Repositories) (*jwt.GinJWTMiddleware, error) {
+func NewMiddleware(repos *entities.Repositories) (*jwt.GinJWTMiddleware, error) {
 	secretKey := os.Getenv("SECRET_KEY")
 	if secretKey == "" {
 		return nil, fmt.Errorf("SECRET_KEY is not set")

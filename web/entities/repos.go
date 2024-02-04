@@ -1,11 +1,11 @@
-package repos
+package entities
 
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/igorzash/project-zefir/web/followpkg"
-	"github.com/igorzash/project-zefir/web/userpkg"
+	"github.com/igorzash/project-zefir/web/entities/followpkg"
+	"github.com/igorzash/project-zefir/web/entities/userpkg"
 )
 
 type Repositories struct {

@@ -3,7 +3,7 @@ package test
 import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/igorzash/project-zefir/web/app"
-	"github.com/igorzash/project-zefir/web/userpkg"
+	"github.com/igorzash/project-zefir/web/entities/userpkg"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"

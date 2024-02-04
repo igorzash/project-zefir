@@ -3,7 +3,7 @@ package auth_user_common
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/igorzash/project-zefir/web/userpkg"
+	"github.com/igorzash/project-zefir/web/entities/userpkg"
 )
 
 const IdentityKey = "email"
