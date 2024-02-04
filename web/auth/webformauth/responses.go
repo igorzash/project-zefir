@@ -1,4 +1,4 @@
-package auth_web_form
+package webformauth
 
 import (
 	"net/http"

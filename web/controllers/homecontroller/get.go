@@ -1,4 +1,4 @@
-package sign_up_controller
+package homecontroller
 
 import (
 	"net/http"
@@ -7,5 +7,5 @@ import (
 )
 
 func Get(c *gin.Context) {
-	c.HTML(http.StatusOK, "signup.html", gin.H{})
+	c.HTML(http.StatusOK, "index.html", gin.H{})
 }

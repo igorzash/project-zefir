@@ -1,4 +1,4 @@
-package auth_user_common
+package userauth
 
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"

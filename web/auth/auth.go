@@ -2,12 +2,12 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/igorzash/project-zefir/web/auth/auth_web_form"
+	"github.com/igorzash/project-zefir/web/auth/webformauth"
 	"github.com/igorzash/project-zefir/web/entities"
 )
 
 func SetUpRoutes(r *gin.Engine, repos *entities.Repositories) error {
-	authWebFormMiddleware, err := auth_web_form.NewMiddleware(repos)
+	authWebFormMiddleware, err := webformauth.NewMiddleware(repos)
 	if err != nil {
 		return err
 	}

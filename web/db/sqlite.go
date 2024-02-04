@@ -9,7 +9,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func Connect() (*sql.DB, error) {
+func SqliteConnect() (*sql.DB, error) {
 	dbPath := os.Getenv("SQLITE_DB_PATH")
 	if dbPath == "" {
 		if _, exists := os.LookupEnv("ALLOW_IN_MEMORY_DB"); exists {

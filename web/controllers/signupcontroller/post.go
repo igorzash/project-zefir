@@ -1,4 +1,4 @@
-package sign_up_controller
+package signupcontroller
 
 import (
 	"net/http"

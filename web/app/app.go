@@ -27,7 +27,7 @@ func NewApp(params *AppParams) (*App, error) {
 	app.R = gin.Default()
 
 	var err error
-	app.DBConn, err = db.Connect()
+	app.DBConn, err = db.SqliteConnect()
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func NewApp(params *AppParams) (*App, error) {
 		}
 	}
 
-	app.Repos, err = entities.NewRepositories(app.DBConn)
+	app.Repos, err = entities.NewSQLRepositories(app.DBConn)
 	if err != nil {
 		return nil, err
 	}

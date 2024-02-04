@@ -1,4 +1,4 @@
-package auth_web_form
+package webformauth
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/igorzash/project-zefir/web/auth/auth_user_common"
+	"github.com/igorzash/project-zefir/web/auth/userauth"
 	"github.com/igorzash/project-zefir/web/entities"
 )
 
@@ -28,9 +28,9 @@ func NewMiddleware(repos *entities.Repositories) (*jwt.GinJWTMiddleware, error) 
 		Key:             []byte(secretKey),
 		Timeout:         time.Hour,
 		MaxRefresh:      time.Hour,
-		IdentityKey:     auth_user_common.IdentityKey,
-		PayloadFunc:     auth_user_common.PayloadFunc,
-		IdentityHandler: auth_user_common.IdentityHandler,
+		IdentityKey:     userauth.IdentityKey,
+		PayloadFunc:     userauth.PayloadFunc,
+		IdentityHandler: userauth.IdentityHandler,
 		Authenticator:   Authenticator(repos),
 		Authorizator:    Authorizator(),
 		LoginResponse:   LoginResponse,

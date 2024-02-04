@@ -1,4 +1,4 @@
-package sign_in_controller
+package signincontroller
 
 import (
 	"net/http"

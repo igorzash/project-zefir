@@ -21,13 +21,14 @@ COPY ./auth/ ./auth/
 COPY ./cmd/ ./cmd/
 COPY ./controllers/ ./controllers/
 COPY ./db/ ./db/
-COPY ./helpers/ ./helpers/
 COPY ./entities/ ./entities/
+COPY ./helpers/ ./helpers/
+COPY ./services/ ./services/
 
 RUN find . -name "*_test.go" -exec rm {} \;
 RUN go build -o ./main ./cmd/app
 RUN go clean -modcache
-RUN rm -r ./app ./auth ./cmd ./controllers ./db ./helpers ./entities
+RUN rm -r ./app ./auth ./cmd ./controllers ./db ./entities ./helpers ./services
 
 COPY ./static ./static
 COPY --from=scss_builder /app/static/index.css ./static/
